@@ -51,9 +51,31 @@ map : {X Y : Type} → (X → Y) → List X → List Y
 map f [] = []
 map f (x :: xs) = f x :: map f xs
 
-
 map-example : map (_+ 3) (1 :: 2 :: 3 :: []) ≡ 4 :: 5 :: 6 :: []
 map-example = refl _
+
+filter : {X : Type} (p : X → Bool) → List X → List X
+filter p [] = []
+filter p (x :: xs) = if p x then x :: filter p xs else filter p xs
+
+is-non-zero : ℕ → Bool
+is-non-zero zero = false
+is-non-zero (suc n) = true
+
+filter-example : filter is-non-zero (4 :: 3 :: 0 :: 1 :: 0 :: []) ≡ 4 :: 3 :: 1 :: []
+filter-example = refl _
+
+
+_≣_ : Bool → Bool → Type
+true ≣ true = 𝟙
+true ≣ false = 𝟘
+false ≣ true = 𝟘
+false ≣ false = 𝟙
+
+
+Bool-refl : (b : Bool) → b ≣ b
+Bool-refl true = ⋆
+Bool-refl false = ⋆
 
 
 
