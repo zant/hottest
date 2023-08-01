@@ -1,8 +1,8 @@
 {-# OPTIONS --without-K --safe #-}
 
-module lecture1 where
+module lecture1-notes where
 
-Type = Set
+open import general-notation
 
 data Bool : Type where
   true false : Bool
@@ -139,3 +139,30 @@ lh (x ∷ xs) ys = IH
   where
     IH : length (xs ++ ys) ≣ (length xs + length ys)
     IH = lh xs ys
+
+data _≡_ {A : Type} : A → A → Type where
+  refl : (x : A) → x ≡ x
+
+trans : {A : Type} {x y z : A} → x ≡ y → y ≡ z → x ≡ z
+trans (refl x) (refl x) = refl x
+
+sym : {A : Type} {x y : A} → x ≡ y → y ≡ x
+sym (refl x) = refl x
+
+ap : {A B : Type} (f : A → B) {x y : A} → x ≡ y → f x ≡ f y
+ap f (refl x) = refl (f x)
+
+back : (x y : ℕ) → x ≡ y → x ≣ y
+back x x (refl x) = ℕ-refl x
+
+suc_eq :(x y : ℕ) → x ≡ y → suc x ≡ suc y
+suc_eq x x (refl x) = refl (suc x)
+
+forth : (x y : ℕ) → x ≣ y → x ≡ y
+forth zero zero h = refl zero
+forth (suc x) (suc y) h = suc_eq x y IH
+  where
+    IH : x ≡ y
+    IH = forth x y h
+
+ 
