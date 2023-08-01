@@ -11,7 +11,6 @@ true &&' false = false
 false &&' true = false
 false &&' false = false
 
-
 _xor_ : Bool → Bool → Bool
 true xor true = false
 true xor false = true
@@ -72,10 +71,104 @@ true ≣ false = 𝟘
 false ≣ true = 𝟘
 false ≣ false = 𝟙
 
-
 Bool-refl : (b : Bool) → b ≣ b
 Bool-refl true = ⋆
 Bool-refl false = ⋆
 
+back : (a b : Bool) → a ≡ b → a ≣ b
+back a a (refl a) = Bool-refl a
 
+forth : (a b : Bool) → a ≣ b → a ≡ b
+forth true true _ = refl true
+forth false false _ = refl false
+
+not-is-involution : (b : Bool) → not (not b) ≡ b
+not-is-involution true = refl true
+not-is-involution false = refl false
+
+||-is-commutative : (a b : Bool) → a || b ≡ b || a
+||-is-commutative true true = refl (true || true)
+||-is-commutative true false = refl true
+||-is-commutative false true = refl true
+||-is-commutative false false = refl false
+
+&&-is-commutative : (a b : Bool) → a && b ≡ b && a
+&&-is-commutative true true = refl true
+&&-is-commutative true false = refl false
+&&-is-commutative false true = refl false
+&&-is-commutative false false = refl false
+
+&&-is-associative : (a b c : Bool) → a && (b && c) ≡ (a && b) && c
+&&-is-associative true b c = refl (b && c)
+&&-is-associative false b c = refl false
+
+&&'-is-associative : (a b c : Bool) → a &&' (b &&' c) ≡ (a &&' b) &&' c
+&&'-is-associative true true true = refl true
+&&'-is-associative true true false = refl false
+&&'-is-associative true false true = refl false
+&&'-is-associative true false false = refl false
+&&'-is-associative false true true = refl false
+&&'-is-associative false true false = refl false
+&&'-is-associative false false true = refl false
+&&'-is-associative false false false = refl false
+
+max-is-commutative : (n m : ℕ) → max n m ≡ max m n
+max-is-commutative zero zero = refl zero
+max-is-commutative zero (suc m) = refl (suc m)
+max-is-commutative (suc n) zero = refl (suc n)
+max-is-commutative (suc n) (suc m) = I
+  where
+    IH : max n m ≡ max m n
+    IH = max-is-commutative n m
+
+    I : suc (max n m) ≡ suc (max m n)
+    I = ap suc IH
+
+min-is-commutative : (m n : ℕ) → min m n ≡ min n m
+min-is-commutative zero zero = refl zero
+min-is-commutative zero (suc n) = refl zero
+min-is-commutative (suc m) zero = refl zero
+min-is-commutative (suc m) (suc n) = I
+  where
+    IH : min m n ≡ min n m
+    IH = min-is-commutative m n
+
+    I : suc (min m n) ≡ suc (min n m)
+    I = ap suc IH
+
+0-right-neutral : (n : ℕ) → n ≡ n + 0
+0-right-neutral zero = refl zero
+0-right-neutral (suc n) = ap suc (0-right-neutral n)
+
+id-refl : {X : Type} (x : X) → id x ≡ x
+id-refl x = refl x
+
+-- not necessary
+-- app-lists : {X : Type} (x y : X) 
+--           → (xs ys : List X) 
+--           → x ≡ y 
+--           → xs ≡ ys 
+--           → x :: xs ≡ y :: ys
+-- app-lists x x xs xs (refl x) (refl xs) = refl (x :: xs)
+
+-- ap : (a b : ℕ) → (f : A → B) → map id xs ≡ xs → id x :: map id xs ≡ x :: xs
+map-id : {X : Type} (xs : List X) → map id xs ≡ xs
+map-id {X} [] = refl []
+map-id {X} (x :: xs) = I
+  where 
+    IH : map id xs ≡ xs
+    IH = map-id xs
+
+    I : id x :: map id xs ≡ x :: xs
+    I = ap (x ::_) IH
+
+--same as above but compressed
+map-comp :  {X Y Z : Type} (f : X → Y) (g : Y → Z)
+            (xs : List X) → map (g ∘ f) xs ≡ map g (map f xs)
+map-comp f g [] = refl []
+map-comp f g (x :: xs) = ap ((g ∘ f) x ::_) (map-comp f g xs)
+  
+
+
+    
 
