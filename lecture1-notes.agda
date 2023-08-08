@@ -34,6 +34,9 @@ idBool'' = id' _
 example : {P Q : Type} → P → (Q → P)
 example p = λ q → p
 
+impl-elim : {P Q : Type} → (P → Q) → P → Q
+impl-elim h p = h p
+
 data ℕ : Type where
   zero : ℕ
   suc : ℕ → ℕ
